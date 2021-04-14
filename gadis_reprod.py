@@ -2,57 +2,65 @@ import random
 import numpy as np
 from deap import creator, base, tools, algorithms
 
+# instances
 rng = np.random.default_rng()
-loads = [27, 7, 6, 5, 4, 6, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 27, 7, 6, 5, 4, 6, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-POP_SIZE = 11
-creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
-creator.create("Individual", list, typecode='b', fitness=creator.FitnessMin)
+
+# globals
+POP_SIZE = 50
+C = 23
+CXPB, MUTPB = 0.65, 0.2  # Crossover and Mutation probabilities
+MUTRT = 0.023
+NGEN = 100  # number of generations
+K_ELITE = 1
+K_TOURNAMENT = 5
+
+creator.create("FitnessMulti", base.Fitness, weights=(-1.0, -0.5))  # define weights
+creator.create("Individual", list, typecode='b', fitness=creator.FitnessMulti)
 
 toolbox = base.Toolbox()
 
 toolbox.register("attr_bool", lambda: rng.integers(2))
 
-toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.attr_bool, len(loads))
+toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.attr_bool, C)
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
-toolbox.register('mate', tools.cxOnePoint)
-toolbox.register('mutate', tools.mutFlipBit, indpb=0.5)
+toolbox.register('mate', tools.cxTwoPoint)
+toolbox.register('mutate', tools.mutFlipBit, indpb=MUTRT)
 
 
 def sel_elite_tournament(individuals, k_elitist, k_tournament, tournsize):
     return tools.selBest(individuals, k_elitist) + tools.selTournament(individuals, k_tournament, tournsize=2)
 
 
+# perguntar ao professor sobre parametros do torneio!
+
 toolbox.register('select', sel_elite_tournament, k_elitist=1, k_tournament=POP_SIZE - 1, tournsize=2)
 
 
-def eval_balance(individual):
-    ind1, ind2 = 0, 0
-    for i, v in enumerate(individual):
-        if v == 0:
-            ind1 += loads[i]
-        else:
-            ind2 += loads[i]
-    return abs(ind1 - ind2),
+def eval_response_time(individual):
+    # call response time for current individual
+    print('TODO')
 
 
-toolbox.register('evaluate', eval_balance)
+def fitness_func(individual):
+    return eval_response_time(individual),
+
+
+toolbox.register('evaluate', fitness_func)
 
 
 def main():
     random.seed(64)
 
     pop = toolbox.population(n=POP_SIZE)
-    CXPB, MUTPB = 0.9, 0.5
 
     fitnesses = list(map(toolbox.evaluate, pop))
     for ind, fit in zip(pop, fitnesses):
         ind.fitness.values = fit
     print("Evaluated %i individuals" % len(pop))
     fits = [ind.fitness.values[0] for ind in pop]
-    ngen = 1000
     g = 0
 
-    while min(fits) > 0 and g < ngen:
+    while min(fits) > 0 and g < NGEN:
         g += 1
         offspring = toolbox.select(pop)
         offspring = list(map(toolbox.clone, offspring))
