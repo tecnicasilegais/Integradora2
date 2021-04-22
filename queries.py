@@ -1,5 +1,5 @@
-q = [
-    (
+q = {
+    1: (
         "select l_returnflag, l_linestatus, "
         "	sum(l_quantity) as sum_qty, "
         "	sum(l_extendedprice) as sum_base_price, "
@@ -14,7 +14,7 @@ q = [
         "group by l_returnflag, l_linestatus "
         "order by l_returnflag, l_linestatus; "
     ),
-    (
+    2: (
         "select s_acctbal, s_name, n_name, p_partkey, p_mfgr, "
         "	s_address, s_phone, s_comment "
         "from PART, SUPPLIER, PARTSUPP, NATION, REGION "
@@ -37,23 +37,8 @@ q = [
         "order by s_acctbal desc, n_name, s_name, p_partkey "
         "limit 100; "
     ),
-    (
-        "select l_returnflag, l_linestatus, "
-        "	sum(l_quantity) as sum_qty, "
-        "	sum(l_extendedprice) as sum_base_price, "
-        "	sum(l_extendedprice * (1 - l_discount)) as sum_disc_price, "
-        "	sum(l_extendedprice * (1 - l_discount) * (1 + l_tax)) as sum_charge, "
-        "		avg(l_quantity) as avg_qty, "
-        "		avg(l_extendedprice) as avg_price, "
-        "		avg(l_discount) as avg_disc, "
-        "		count(*) as count_order "
-        "from LINEITEM "
-        "where l_shipdate <= date '1998-12-01' - interval '108' day "
-        "group by l_returnflag, l_linestatus "
-        "order by l_returnflag, l_linestatus; "
-    ),
 
-    (
+    3: (
         "select l_orderkey, "
         "	sum(l_extendedprice * (1 - l_discount)) as revenue, "
         "	o_orderdate, o_shippriority "
@@ -68,7 +53,7 @@ q = [
         "limit 10; "
     ),
 
-    (
+    4: (
         "select o_orderpriority, count(*) as order_count "
         "from ORDERS "
         "where o_orderdate >= date '1995-01-01' "
@@ -83,7 +68,7 @@ q = [
         "order by o_orderpriority; "
     ),
 
-    (
+    5: (
         "select n_name, sum(l_extendedprice * (1 - l_discount)) as revenue "
         "from CUSTOMER, ORDERS, LINEITEM, SUPPLIER, NATION, REGION "
         "where c_custkey = o_custkey "
@@ -99,7 +84,7 @@ q = [
         "order by revenue desc; "
     ),
 
-    (
+    6: (
         "select sum(l_extendedprice * l_discount) as revenue "
         "from LINEITEM "
         "where l_shipdate >= date '1994-01-01' "
@@ -108,7 +93,7 @@ q = [
         "	and l_quantity < 24; "
     ),
 
-    (
+    7: (
         "select supp_nation, cust_nation, l_year, sum(volume) as revenue "
         "from ( "
         "	select n1.n_name as supp_nation, "
@@ -128,7 +113,7 @@ q = [
         "order by supp_nation, cust_nation, l_year; "
     ),
 
-    (
+    8: (
         "select o_year, sum(case when nation = 'INDIA' then volume else 0 end) / sum(volume) as mkt_share "
         "from ( "
         "	select extract(year from o_orderdate) as o_year,	"
@@ -150,7 +135,7 @@ q = [
         "order by o_year; "
     ),
 
-    (
+    9: (
         "select nation, o_year, sum(amount) as sum_profit "
         "from ( "
         "	select n_name as nation, extract(year from o_orderdate) as o_year, "
@@ -168,7 +153,7 @@ q = [
         "order by nation, o_year desc; "
     ),
 
-    (
+    10: (
         "select c_custkey, c_name, sum(l_extendedprice * (1 - l_discount)) as revenue, "
         "	c_acctbal, n_name, c_address, c_phone, c_comment "
         "from CUSTOMER, ORDERS, LINEITEM, NATION "
@@ -183,7 +168,7 @@ q = [
         "limit 20; "
     ),
 
-    (
+    11: (
         "select ps_partkey, sum(ps_supplycost * ps_availqty) as value "
         "from PARTSUPP, SUPPLIER, NATION "
         "where ps_suppkey = s_suppkey "
@@ -200,7 +185,7 @@ q = [
         "order by value desc; "
     ),
 
-    (
+    12: (
         "select l_shipmode, "
         "	sum(case "
         "		when o_orderpriority = '1-URGENT' "
@@ -225,7 +210,7 @@ q = [
         "order by l_shipmode; "
     ),
 
-    (
+    13: (
         "select c_count, count(*) as custdist "
         "from ( "
         "	select c_custkey, count(o_orderkey) as c_count "
@@ -237,7 +222,7 @@ q = [
         "order by custdist desc, c_count desc; "
     ),
 
-    (
+    14: (
         "select 100.00 * "
         "	sum(case "
         "		when p_type like 'PROMO%' "
@@ -250,7 +235,7 @@ q = [
         "	and l_shipdate < date '1996-12-01' + interval '1' month; "
     ),
 
-    (
+    15: (
         "create view REVENUE0 (supplier_no, total_revenue) as "
         "	select l_suppkey, sum(l_extendedprice * (1 - l_discount)) "
         "	from LINEITEM "
@@ -269,7 +254,7 @@ q = [
         "drop view REVENUE0; "
     ),
 
-    (
+    16: (
         "select p_brand, p_type, p_size, count(distinct ps_suppkey) as supplier_cnt "
         "from PARTSUPP, PART "
         "where p_partkey = ps_partkey "
@@ -285,7 +270,7 @@ q = [
         "order by supplier_cnt desc, p_brand, p_type, p_size; "
     ),
 
-    (
+    17: (
         "select sum(l_extendedprice) / 7.0 as avg_yearly "
         "from LINEITEM, PART "
         "where p_partkey = l_partkey "
@@ -298,7 +283,7 @@ q = [
         "	); "
     ),
 
-    (
+    18: (
         "select c_name, c_custkey, o_orderkey, o_orderdate, o_totalprice, sum(l_quantity) "
         "from CUSTOMER, ORDERS, LINEITEM "
         "where o_orderkey in ( "
@@ -314,7 +299,7 @@ q = [
         "limit 100; "
     ),
 
-    (
+    19: (
         "select sum(l_extendedprice* (1 - l_discount)) as revenue "
         "from LINEITEM, PART "
         "where (p_partkey = l_partkey "
@@ -343,7 +328,7 @@ q = [
         "); "
     ),
 
-    (
+    20: (
         "select s_name, s_address "
         "from SUPPLIER, NATION "
         "where s_suppkey in ( "
@@ -368,7 +353,7 @@ q = [
         "order by s_name; "
     ),
 
-    (
+    21: (
         "select s_name, count(*) as numwait "
         "from SUPPLIER, LINEITEM l1, ORDERS, NATION "
         "where s_suppkey = l1.l_suppkey "
@@ -394,7 +379,7 @@ q = [
         "limit 100; "
     ),
 
-    (
+    22: (
         "select cntrycode, count(*) as numcust, sum(c_acctbal) as totacctbal "
         "from ( "
         "	select substring(c_phone from 1 for 2) as cntrycode, "
@@ -414,4 +399,4 @@ q = [
         "group by cntrycode "
         "order by cntrycode; "
     )
-]
+}
