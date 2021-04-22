@@ -9,7 +9,7 @@ PASSWORD = os.environ['integradora_password']
 
 
 class Db:
-    def __init__(self, name):
+    def __init__(self):
         self.conn = mysql.connector.connect(user=USER, password=PASSWORD, host='localhost', database='tpch')
         self.cursor = self.conn.cursor
         self.initial_index_size = self.get_index_size()
