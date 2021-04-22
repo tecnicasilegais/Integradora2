@@ -14,6 +14,7 @@ NGEN = 100  # number of generations
 K_ELITE = 1
 K_TOURNAMENT = 5
 
+
 creator.create("FitnessMulti", base.Fitness, weights=(-1.0, -0.5))  # define weights
 creator.create("Individual", list, typecode='b', fitness=creator.FitnessMulti)
 
@@ -26,14 +27,7 @@ toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 toolbox.register('mate', tools.cxTwoPoint)
 toolbox.register('mutate', tools.mutFlipBit, indpb=MUTRT)
 
-
-def sel_elite_tournament(individuals, k_elitist, k_tournament, tournsize):
-    return tools.selBest(individuals, k_elitist) + tools.selTournament(individuals, k_tournament, tournsize=2)
-
-
-# perguntar ao professor sobre parametros do torneio!
-
-toolbox.register('select', sel_elite_tournament, k_elitist=1, k_tournament=POP_SIZE - 1, tournsize=2)
+toolbox.register('select', tools.selNSGA)
 
 
 def eval_response_time(individual):
