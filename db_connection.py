@@ -22,15 +22,11 @@ class Db:
         self.conn = mysql.connector.connect(user=USER, password=PASSWORD, host='localhost', database='tpch')
         self.cursor = self.conn.cursor
         self.initial_index_size = self.get_index_size()
-        self.biggest_tables = self.get_biggest_tables()
+        self.last_state = [0]*22
 
     def close(self):
         self.cursor.close()
         self.conn.close()
-
-    def get_biggest_tables(self):
-        self.cursor.execute('todo')
-        return self.cursor.biggest
 
     def get_index_size(self):
         self.cursor.execute(queries.index_size)
