@@ -20,7 +20,8 @@ INDEXES = {
 
 class Db:
     def __init__(self):
-        self.conn = mysql.connector.connect(user=USER, password=PASSWORD, host=HOST, database='tpch', auth_plugin='mysql_native_password')
+        self.conn = mysql.connector.connect(user=USER, password=PASSWORD, host=HOST, database='tpch',
+                                            auth_plugin='mysql_native_password')
         self.cursor = self.conn.cursor()
         self.initial_index_size = self.get_index_size()
         self.last_state = [0] * 22
@@ -46,10 +47,10 @@ class Db:
         return end - start
 
     def create_index(self, tbl, column):
-        self.cursor.execute('create_index')  # todo
+        self.cursor.execute(queries.create_index, (column, tbl))
 
     def drop_index(self, tbl, column):
-        self.cursor.execute('drop_index')   # todo
+        self.cursor.execute(queries.drop_index, (column, tbl))
 
     def simulate_individual(self, individual):
         for i in range(len(individual)):

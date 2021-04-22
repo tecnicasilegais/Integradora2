@@ -1,5 +1,9 @@
+create_index = (
+    "create index %s on %s;"
+)
+
 drop_index = (
-    "drop index '%s' on %s "
+    "drop index %s on %s;"
 )
 
 index_size = (
