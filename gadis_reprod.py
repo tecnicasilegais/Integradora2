@@ -3,6 +3,8 @@ import numpy as np
 from deap import creator, base, tools, algorithms
 
 # instances
+import db_connection
+
 rng = np.random.default_rng()
 
 # globals
@@ -30,14 +32,8 @@ toolbox.register('mutate', tools.mutFlipBit, indpb=MUTRT)
 toolbox.register('select', tools.selNSGA)
 
 
-def eval_response_time(individual):
-    # call response time for current individual
-    print('TODO')
-
-
 def fitness_func(individual):
-    return eval_response_time(individual),
-
+    return db_connection.simulate_individual(individual)
 
 toolbox.register('evaluate', fitness_func)
 
