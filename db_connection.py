@@ -26,7 +26,7 @@ class Db:
         self.initial_index_size = self.get_index_size()
         print(self.initial_index_size, type(self.initial_index_size))
         self.last_state = [1] * 22
-        self.time_all_indexed = self.simulate_individual([1]*22)
+        self.time_all_indexed = self.simulate_individual([1] * 22)
 
     def close(self):
         self.cursor.close()
@@ -39,12 +39,24 @@ class Db:
         self.cursor.execute(queries.index_size)
         return self.cursor.fetchone()[0]
 
+    def execute_single_querie(self, querie):
+                self.cursor.execute(querie)
+                self.clean_cursor()
+
     def execute_queries(self):
         start = time.time()
-        for i in range(1, 23):
-            self.cursor.execute(queries.select[i])
-            self.clean_cursor()
-            print("foi", i)
+        for i in range(1, 15):
+            self.execute_single_querie(queries.select[i])
+            partial_end = time.time()
+            print("foi", i, partial_end - start)
+
+        self.cursor.execute(queries.select[15], multi=True)
+
+        for i in range(16, 23):
+            self.execute_single_querie(queries.select[i])
+            partial_end = time.time()
+            print("foi", i, partial_end - start)
+
         end = time.time()
         print(end - start)
         return end - start

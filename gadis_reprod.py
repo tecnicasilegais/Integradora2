@@ -15,7 +15,7 @@ MUTRT = 0.023
 NGEN = 100  # number of generations
 K_ELITE = 1
 K_TOURNAMENT = 5
-
+db = db_connection.Db()
 
 creator.create("FitnessMulti", base.Fitness, weights=(-1.0, -0.5))  # define weights
 creator.create("Individual", list, typecode='b', fitness=creator.FitnessMulti)
@@ -33,14 +33,13 @@ toolbox.register('select', tools.selNSGA)
 
 
 def fitness_func(individual):
-    return db_connection.simulate_individual(individual)
+    return db.simulate_individual(individual)
 
 toolbox.register('evaluate', fitness_func)
 
 
 def main():
     random.seed(64)
-
     pop = toolbox.population(n=POP_SIZE)
 
     fitnesses = list(map(toolbox.evaluate, pop))
