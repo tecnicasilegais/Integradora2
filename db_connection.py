@@ -17,6 +17,7 @@ INDEXES = {
     20: ["l_shipmode", "lineitem"], 21: ["l_quantity", "lineitem"]
 }
 
+err = mysql.connector.errors.ProgrammingError
 
 class Db:
     def __init__(self):
@@ -62,12 +63,28 @@ class Db:
         return end - start
 
     def create_index(self, tbl, column):
-        print(self.cursor.execute(queries.create_index % ('index_' + column, tbl, column)))
+        self.cursor.execute(queries.create_index % ('index_' + column, tbl, column))
 
     def drop_index(self, tbl, column):
         self.cursor.execute(queries.drop_index % ('index_' + column, tbl))
 
+    def rollback(self):
+        self.cursor.execute('rollback;')
+
+    def commit(self):
+        self.cursor.execute('commit;')
+
+    def debug(self):
+        for i in range(22):
+            try:
+                self.drop_index(INDEXES[i][1], INDEXES[i][0])
+            except err as error:
+                print(error)
+                continue
+        print('debug done')
+
     def simulate_individual(self, individual):
+        start = time.time()
         for i in range(len(individual)):
             if self.last_state[i] != individual[i]:
                 if individual[i] == 1:
@@ -75,4 +92,6 @@ class Db:
                 else:
                     self.drop_index(INDEXES[i][1], INDEXES[i][0])
         self.last_state = individual.copy()
+        print('time spent creating and dropping indexes:', time.time() - start)
+
         return self.execute_queries()
