@@ -25,7 +25,7 @@ class Db:
         self.cursor = self.conn.cursor()
         self.initial_index_size = self.get_index_size()
         print(self.initial_index_size, type(self.initial_index_size))
-        self.last_state = [1] * 22
+        self.last_state = [0] * 22
         self.time_all_indexed = self.simulate_individual([1] * 22)
 
     def close(self):
@@ -62,7 +62,7 @@ class Db:
         return end - start
 
     def create_index(self, tbl, column):
-        self.cursor.execute(queries.create_index % ('index_' + column, tbl, column))
+        print(self.cursor.execute(queries.create_index % ('index_' + column, tbl, column)))
 
     def drop_index(self, tbl, column):
         self.cursor.execute(queries.drop_index % ('index_' + column, tbl))
