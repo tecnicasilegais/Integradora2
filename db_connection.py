@@ -39,21 +39,21 @@ class Db:
         self.cursor.execute(queries.index_size)
         return self.cursor.fetchone()[0]
 
-    def execute_single_querie(self, querie):
-                self.cursor.execute(querie)
-                self.clean_cursor()
+    def execute_single_query(self, query):
+        self.cursor.execute(query)
+        self.clean_cursor()
 
     def execute_queries(self):
         start = time.time()
         for i in range(1, 15):
-            self.execute_single_querie(queries.select[i])
+            self.execute_single_query(queries.select[i])
             partial_end = time.time()
             print("foi", i, partial_end - start)
 
         self.cursor.execute(queries.select[15], multi=True)
 
         for i in range(16, 23):
-            self.execute_single_querie(queries.select[i])
+            self.execute_single_query(queries.select[i])
             partial_end = time.time()
             print("foi", i, partial_end - start)
 
@@ -62,10 +62,10 @@ class Db:
         return end - start
 
     def create_index(self, tbl, column):
-        self.cursor.execute(queries.create_index, (column, tbl))
+        self.cursor.execute(queries.create_index % ('index_' + column, tbl, column))
 
     def drop_index(self, tbl, column):
-        self.cursor.execute(queries.drop_index, (column, tbl))
+        self.cursor.execute(queries.drop_index % ('index_' + column, tbl))
 
     def simulate_individual(self, individual):
         for i in range(len(individual)):

@@ -1,5 +1,5 @@
 create_index = (
-    "create index %s on %s;"
+    "create index %s on %s(%s);"
 )
 
 drop_index = (
