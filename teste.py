@@ -1,10 +1,13 @@
 import db_connection
-import queries
+import numpy as np
 
 db = db_connection.Db()
 
-#db.debug()
+# db.debug()
 
-db.simulate_individual([0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0])
+for i in range(0, 5000):
+    individual = np.random.randint(2, size=22)
+    db.simulate_individual(individual)
+    print(i)
 
 db.close()

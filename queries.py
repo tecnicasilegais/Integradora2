@@ -10,7 +10,7 @@ index_size = (
     "select sum(round(index_length/1024/1024,2)) as index_size "
     "from information_schema.tables "
     "where table_type = 'BASE TABLE' "
-    "	and table_schema not in ('information_schema', 'sys', 'performance_schema', 'mysql'); "
+    "	and table_schema = 'tpch_sm'; "
 )
 
 select = {
