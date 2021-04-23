@@ -24,6 +24,7 @@ class Db:
                                             auth_plugin='mysql_native_password')
         self.cursor = self.conn.cursor()
         self.initial_index_size = self.get_index_size()
+        self.time_all_indexed = self.simulate_individual([1]*22)
         self.last_state = [0] * 22
 
     def close(self):
@@ -59,5 +60,5 @@ class Db:
                     self.create_index(INDEXES[i][1], INDEXES[i][0])
                 else:
                     self.drop_index(INDEXES[i][1], INDEXES[i][0])
-
+        self.last_state = individual.copy()
         return self.execute_queries()
