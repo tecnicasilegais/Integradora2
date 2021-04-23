@@ -24,8 +24,9 @@ class Db:
                                             auth_plugin='mysql_native_password')
         self.cursor = self.conn.cursor()
         self.initial_index_size = self.get_index_size()
+        print(self.initial_index_size, type(self.initial_index_size))
+        self.last_state = [1] * 22
         self.time_all_indexed = self.simulate_individual([1]*22)
-        self.last_state = [0] * 22
 
     def close(self):
         self.cursor.close()
@@ -36,7 +37,7 @@ class Db:
 
     def get_index_size(self):
         self.cursor.execute(queries.index_size)
-        return self.cursor.fetchone()
+        return self.cursor.fetchone()[0]
 
     def execute_queries(self):
         start = time.time()
@@ -45,6 +46,7 @@ class Db:
             self.clean_cursor()
             print("foi", i)
         end = time.time()
+        print(end - start)
         return end - start
 
     def create_index(self, tbl, column):
