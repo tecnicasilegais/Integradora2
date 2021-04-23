@@ -19,17 +19,20 @@ INDEXES = {
 
 err = mysql.connector.errors.ProgrammingError
 
+
 class Db:
     def __init__(self):
-        self.conn = mysql.connector.connect(user=USER, password=PASSWORD, host=HOST, database='tpch',
+        self.conn = mysql.connector.connect(user=USER, password=PASSWORD, host=HOST, database='tpch_sm',
                                             auth_plugin='mysql_native_password')
         self.cursor = self.conn.cursor()
+        self.drop_all_indexes()
         self.initial_index_size = self.get_index_size()
         print(self.initial_index_size, type(self.initial_index_size))
         self.last_state = [0] * 22
         self.time_all_indexed = self.simulate_individual([1] * 22)
 
     def close(self):
+        self.drop_all_indexes()
         self.cursor.close()
         self.conn.close()
 
@@ -48,15 +51,11 @@ class Db:
         start = time.time()
         for i in range(1, 15):
             self.execute_single_query(queries.select[i])
-            partial_end = time.time()
-            print("foi", i, partial_end - start)
 
         self.cursor.execute(queries.select[15], multi=True)
 
         for i in range(16, 23):
             self.execute_single_query(queries.select[i])
-            partial_end = time.time()
-            print("foi", i, partial_end - start)
 
         end = time.time()
         print(end - start)
@@ -74,12 +73,11 @@ class Db:
     def commit(self):
         self.cursor.execute('commit;')
 
-    def debug(self):
+    def drop_all_indexes(self):
         for i in range(22):
             try:
                 self.drop_index(INDEXES[i][1], INDEXES[i][0])
-            except err as error:
-                print(error)
+            except err:
                 continue
         print('debug done')
 
