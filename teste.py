@@ -1,18 +1,15 @@
-import time
-
 import db_connection
-import numpy as np
+import logging
 
-db = db_connection.Db()
+import util
 
-# db.debug()
+logging.basicConfig(filename=util.make_filename('gen_execution.log'), encoding='utf-8', level=logging.DEBUG)
 
-start = time.time()
-for i in range(0, 5000):
-    individual = np.random.randint(2, size=22)
-    db.simulate_individual(individual)
-    print(i)
+db = db_connection.Db(logging)
 
-end = time.time()
-print(end - start)
+individual = [0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0]
+individual2 = [0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0]
+db.simulate_individual(individual)
+db.simulate_individual(individual2)
+
 db.close()
