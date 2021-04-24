@@ -21,7 +21,7 @@ db = db_connection.Db()
 
 logging.basicConfig(filename=util.make_filename('gen_execution.log'), encoding='utf-8', level=logging.DEBUG)
 
-creator.create("FitnessMulti", base.Fitness, weights=(-1.0, -1))  # define weights
+creator.create("FitnessMulti", base.Fitness, weights=(1.0, 1.0))  # define weights
 creator.create("Individual", list, typecode='b', fitness=creator.FitnessMulti)
 
 toolbox = base.Toolbox()
