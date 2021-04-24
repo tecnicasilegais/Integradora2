@@ -3,6 +3,7 @@ import math
 import mysql.connector
 import os
 import time
+import logging
 
 import queries
 
@@ -27,7 +28,8 @@ def scale(ind_size):
 
 
 class Db:
-    def __init__(self):
+    def __init__(self, logging):
+        self.logging = logging
         self.conn = mysql.connector.connect(user=USER, password=PASSWORD, host=HOST, database='tpch_sm',
                                             auth_plugin='mysql_native_password')
         self.cursor = self.conn.cursor()
@@ -51,7 +53,9 @@ class Db:
 
     def get_index_size(self):
         self.cursor.execute(queries.index_size)
-        return self.cursor.fetchone()[0]
+        res = self.cursor.fetchone()[0]
+        print(res)
+        return res
 
     def execute_single_query(self, query):
         self.cursor.execute(query)
@@ -69,6 +73,7 @@ class Db:
 
         end = time.time()
         # print('time running queries: ', end - start)
+        logging.info('time in queries: %f' % (end-start))
         return end - start
 
     def create_index(self, tbl, column):
@@ -109,6 +114,7 @@ class Db:
         return self.initial_state_size / scale(self.get_index_size())
 
     def simulate_individual(self, individual):
+        logging.info('simulate individual: %s' % individual)
         self.index_individual(individual)
         obj1 = self.objective1()
         obj2 = self.objective2()
