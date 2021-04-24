@@ -13,7 +13,7 @@ rng = np.random.default_rng()
 POP_SIZE = 50
 C = 22
 CXPB, MUTPB = 0.65, 0.2  # Crossover and Mutation probabilities
-MUTRT = 0.023
+MUTRT = 0.022
 NGEN = 100  # number of generations
 K_ELITE = 1
 K_TOURNAMENT = 5
@@ -21,7 +21,7 @@ db = db_connection.Db()
 
 logging.basicConfig(filename=util.make_filename('gen_execution.log'), encoding='utf-8', level=logging.DEBUG)
 
-creator.create("FitnessMulti", base.Fitness, weights=(-1.0, -0.5))  # define weights
+creator.create("FitnessMulti", base.Fitness, weights=(-1.0, -1))  # define weights
 creator.create("Individual", list, typecode='b', fitness=creator.FitnessMulti)
 
 toolbox = base.Toolbox()
@@ -44,7 +44,7 @@ toolbox.register('evaluate', fitness_func)
 
 
 def stop_criteria(best_fits):
-    return np.all(best_fits == best_fits[0])
+    return len(set(best_fits)) == 1
 
 
 def main():
@@ -59,11 +59,11 @@ def main():
     for ind, fit in zip(invalid_ind, fitnesses):
         ind.fitness.values = fit
 
-    '''for ind, fit in zip(pop, fitnesses):
-        ind.fitness.values = fit
-    print("Evaluated %i individuals" % len(pop))
-    fits = [ind.fitness.values[0] for ind in pop]
-    g = 0'''
+    '''fits = [ind.fitness.values[0] for ind in pop]
+    logging.debug('initial:\n')
+    for i in range(len(pop)):
+        logging.debug('%i: %s' % (i, pop[i]))
+        logging.debug('%i: %s' % (i, fits[i]))'''
 
     pop = toolbox.select(pop, len(pop))
 
@@ -76,12 +76,15 @@ def main():
 
         for child1, child2 in zip(offspring[::2], offspring[1::2]):
             if rng.random() <= CXPB:
+                # logging.debug('crossover %i' % gen)
+
                 toolbox.mate(child1, child2)
                 del child1.fitness.values
                 del child1.fitness.values
 
         for mutant in offspring:
             if rng.random() < MUTPB:
+                # logging.debug('mutation %i' % gen)
                 toolbox.mutate(mutant)
                 del mutant.fitness.values
 
@@ -94,9 +97,12 @@ def main():
         pop = toolbox.select(pop + offspring, POP_SIZE)
         fits = [ind.fitness.values[0] for ind in pop]
 
-        print('generation %i:' % gen)
+        '''logging.debug('G %i:' % gen)
+        for i in range(len(pop)):
+            logging.debug('%i: %s' % (i, pop[i]))
+            #logging.debug('%i: %s' % (i, fits[i]))'''
+
         bestf = min(fits)
-        print("fitness --", bestf)
 
         best_ind = tools.selBest(pop, 1)[0]
         logging.info('Generation: %i, best individual: %s, fitness: %s' % (gen, best_ind, bestf))
