@@ -1,3 +1,5 @@
+import math
+
 import mysql.connector
 import os
 import time
@@ -20,16 +22,24 @@ INDEXES = {
 err = mysql.connector.errors.ProgrammingError
 
 
+def scale(ind_size):
+    return 1 / math.log10(ind_size + 1)
+
+
 class Db:
     def __init__(self):
         self.conn = mysql.connector.connect(user=USER, password=PASSWORD, host=HOST, database='tpch_sm',
                                             auth_plugin='mysql_native_password')
         self.cursor = self.conn.cursor()
         self.drop_all_indexes()
+        # initialize index sizes
         self.initial_index_size = self.get_index_size()
-        print(self.initial_index_size, type(self.initial_index_size))
+        self.initial_state_size = scale(self.initial_index_size)
+
+        # initialize state and indexes
         self.last_state = [0] * 22
-        self.time_all_indexed = self.simulate_individual([1] * 22)
+        self.index_individual([1] * 22)
+        self.time_all_indexed = self.execute_queries()
 
     def close(self):
         self.drop_all_indexes()
@@ -58,7 +68,7 @@ class Db:
             self.execute_single_query(queries.select[i])
 
         end = time.time()
-        print(end - start)
+        # print('time running queries: ', end - start)
         return end - start
 
     def create_index(self, tbl, column):
@@ -81,7 +91,7 @@ class Db:
                 continue
         print('debug done')
 
-    def simulate_individual(self, individual):
+    def index_individual(self, individual):
         start = time.time()
         for i in range(len(individual)):
             if self.last_state[i] != individual[i]:
@@ -90,6 +100,16 @@ class Db:
                 else:
                     self.drop_index(INDEXES[i][1], INDEXES[i][0])
         self.last_state = individual.copy()
-        print('time spent creating and dropping indexes:', time.time() - start)
+        # print('time spent creating and dropping indexes:', time.time() - start)
 
-        return self.execute_queries()
+    def objective1(self):
+        return self.time_all_indexed / self.execute_queries()
+
+    def objective2(self):
+        return self.initial_state_size / scale(self.get_index_size())
+
+    def simulate_individual(self, individual):
+        self.index_individual(individual)
+        obj1 = self.objective1()
+        obj2 = self.objective2()
+        return obj1, obj2

@@ -11,7 +11,7 @@ rng = np.random.default_rng()
 
 # globals
 POP_SIZE = 50
-C = 23
+C = 22
 CXPB, MUTPB = 0.65, 0.2  # Crossover and Mutation probabilities
 MUTRT = 0.023
 NGEN = 100  # number of generations
@@ -33,7 +33,7 @@ toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 toolbox.register('mate', tools.cxTwoPoint)
 toolbox.register('mutate', tools.mutFlipBit, indpb=MUTRT)
 
-toolbox.register('select', tools.selNSGA)
+toolbox.register('select', tools.selNSGA2)
 
 
 def fitness_func(individual):
@@ -99,7 +99,7 @@ def main():
         print("fitness --", bestf)
 
         best_ind = tools.selBest(pop, 1)[0]
-        logging.info('Generation: %i, best individual: %s, fitness: %s' % gen, best_ind, bestf)
+        logging.info('Generation: %i, best individual: %s, fitness: %s' % (gen, best_ind, bestf))
         best_fits.append(bestf)
 
         if len(best_fits) > 10:
@@ -111,7 +111,7 @@ def main():
     best_ind = tools.selBest(pop, 1)[0]
     print(best_ind)
     print(min(fits))
-    logging.info('END RESULT: best individual: %s, fitness: %s' % best_ind, min(fits))
+    logging.info('END RESULT: best individual: %s, fitness: %s' % (best_ind, min(fits)))
 
 
 if __name__ == '__main__':
