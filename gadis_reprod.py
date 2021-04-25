@@ -18,10 +18,9 @@ NGEN = 100  # number of generations
 K_ELITE = 1
 K_TOURNAMENT = 5
 
-logging.basicConfig(filename=util.make_filename('gen_execution.log'), encoding='utf-8', level=logging.DEBUG)
+logging.basicConfig(filename='logs\\' + util.make_filename('gen_execution.log'), encoding='utf-8', level=logging.DEBUG)
 
 db = db_connection.Db(logging)
-
 
 creator.create("FitnessMulti", base.Fitness, weights=(1.0, 1.0))  # define weights
 creator.create("Individual", list, typecode='b', fitness=creator.FitnessMulti)
