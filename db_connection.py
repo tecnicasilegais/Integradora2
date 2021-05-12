@@ -54,7 +54,7 @@ class Db:
     def get_index_size(self):
         self.cursor.execute(queries.index_size, (DATABASE,))
         res = self.cursor.fetchone()[0]
-        print(res)
+        self.logging.info(res)
         return res
 
     def execute_single_query(self, query):

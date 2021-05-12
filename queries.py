@@ -5,12 +5,11 @@ create_index = (
 drop_index = (
     "drop index %s on %s;"
 )
-
 index_size = (
-    "SELECT sum(ROUND(stat_value * @@innodb_page_size / 1024 / 1024, 2)) size_in_mb "
-    "FROM mysql.innodb_index_stats "
-    "WHERE stat_name = 'size' "
-    "   and database_name = %s;"
+    "select sum(round(stat_value * @@innodb_page_size / 1024 / 1024, 2)) size_in_mb "
+    "from mysql.innodb_index_stats "
+    "where stat_name = 'size' "
+    "   and database_name = %s; "
 )
 
 select = {
