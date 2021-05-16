@@ -1,11 +1,15 @@
-import random
 import logging
+import random
+
 import numpy as np
-from deap import creator, base, tools, algorithms
+from deap import creator, base, tools
+from fastDamerauLevenshtein import damerauLevenshtein
+from sort import SortingAlgorithms
+
+import db_connection
 import util
 
 # instances
-import db_connection
 
 rng = np.random.default_rng()
 
@@ -18,7 +22,7 @@ NGEN = 100  # number of generations
 K_ELITE = 1
 K_TOURNAMENT = 5
 
-logging.basicConfig(filename='logs\\' + util.make_filename('gen_execution.log'), encoding='utf-8', level=logging.DEBUG)
+logging.basicConfig(filename='logs\\' + util.make_filename('gen_execution.log'), level=logging.DEBUG)
 
 db = db_connection.Db(logging)
 
@@ -52,6 +56,19 @@ def main():
     best_fits = []
     random.seed(64)
     pop = toolbox.population(n=POP_SIZE)
+
+    sub_costs = np.ones((128, 128), dtype=np.float64)
+    sub_costs[ord('0'), ord('1')] = 2
+
+    ref = [0] * len(pop[0])
+    res = [0] * len(pop)
+    for i in range(0, len(pop)):
+        res[i] = (damerauLevenshtein(ref, pop[i], False, 1, 1, 1, 5), pop[i])
+
+    res = SortingAlgorithms.quick_sort(res, 0, len(res) - 1)
+
+    for i in range(0, len(pop)):
+        pop[i] = res[i][1]
 
     # Evaluate the individuals with an invalid fitness
     invalid_ind = [ind for ind in pop if not ind.fitness.valid]
