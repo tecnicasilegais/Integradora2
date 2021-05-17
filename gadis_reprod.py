@@ -1,11 +1,12 @@
-import random
 import logging
+import random
+
 import numpy as np
-from deap import creator, base, tools, algorithms
-import util
+from deap import creator, base, tools
 
 # instances
 import db_connection
+import util
 
 rng = np.random.default_rng()
 
@@ -60,11 +61,11 @@ def main():
     for ind, fit in zip(invalid_ind, fitnesses):
         ind.fitness.values = fit
 
-    '''fits = [ind.fitness.values[0] for ind in pop]
+    fits = [ind.fitness.values[0] for ind in pop]
     logging.debug('initial:\n')
     for i in range(len(pop)):
         logging.debug('%i: %s' % (i, pop[i]))
-        logging.debug('%i: %s' % (i, fits[i]))'''
+        logging.debug('%i: %s' % (i, fits[i]))
 
     pop = toolbox.select(pop, len(pop))
 
@@ -72,9 +73,13 @@ def main():
     for gen in range(1, NGEN):
 
         # Vary the population
-        offspring = tools.selTournamentDCD(pop, K_TOURNAMENT)
+        offspring = tools.selBest(pop, 1) + tools.selTournamentDCD(pop, K_TOURNAMENT)
+
+        offspring += pop[len(offspring):]
+
         offspring = [toolbox.clone(ind) for ind in offspring]
 
+        print(len(offspring))
         for child1, child2 in zip(offspring[::2], offspring[1::2]):
             if rng.random() <= CXPB:
                 # logging.debug('crossover %i' % gen)
