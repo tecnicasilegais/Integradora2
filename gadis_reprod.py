@@ -3,8 +3,8 @@ import random
 
 import numpy as np
 from deap import creator, base, tools
-from fastDamerauLevenshtein import damerauLevenshtein
 from sort import SortingAlgorithms
+from strsimpy.weighted_levenshtein import WeightedLevenshtein
 
 import db_connection
 import util
@@ -41,15 +41,36 @@ toolbox.register('mutate', tools.mutFlipBit, indpb=MUTRT)
 toolbox.register('select', tools.selNSGA2)
 
 
-def fitness_func(individual):
-    return db.simulate_individual(individual)
+def fitness_func(individual): return db.simulate_individual(individual)
 
 
 toolbox.register('evaluate', fitness_func)
 
 
-def stop_criteria(best_fits):
-    return len(set(best_fits)) == 1
+def stop_criteria(best_fits): return len(set(best_fits)) == 1
+
+
+def sort_closest_ind(comparer, reference, comparisons):
+    res = [0] * len(comparisons)
+    for i in range(0, len(comparisons)):
+        res[i] = (comparer.distance(reference, comparisons[i][1]), comparisons[i][1])
+
+    res = SortingAlgorithms.quick_sort(res, 0, len(res) - 1)
+
+    return res
+
+
+def sort_sequence(levenshtein, pop):
+    res = [0] * len(pop)
+    remaining = sort_closest_ind(levenshtein, [0] * len(pop[0]), list(zip(res, pop)))
+    res[0] = remaining[0][1]
+    for i in range(1, len(pop)):
+        remaining = sort_closest_ind(levenshtein, remaining[0][1], remaining[1:])
+        res[i] = remaining[0][1]
+    return res
+
+
+def substitute_cost(a, b): return 2.0 if (a == '0' and b == '1') else 1.0
 
 
 def main():
@@ -57,18 +78,7 @@ def main():
     random.seed(64)
     pop = toolbox.population(n=POP_SIZE)
 
-    sub_costs = np.ones((128, 128), dtype=np.float64)
-    sub_costs[ord('0'), ord('1')] = 2
-
-    ref = [0] * len(pop[0])
-    res = [0] * len(pop)
-    for i in range(0, len(pop)):
-        res[i] = (damerauLevenshtein(ref, pop[i], False, 1, 1, 1, 5), pop[i])
-
-    res = SortingAlgorithms.quick_sort(res, 0, len(res) - 1)
-
-    for i in range(0, len(pop)):
-        pop[i] = res[i][1]
+    levenshtein = WeightedLevenshtein(substitution_cost_fn=substitute_cost)
 
     # Evaluate the individuals with an invalid fitness
     invalid_ind = [ind for ind in pop if not ind.fitness.valid]
