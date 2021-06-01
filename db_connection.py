@@ -9,7 +9,7 @@ import queries
 USER = os.environ['integradora_user']
 PASSWORD = os.environ['integradora_password']
 HOST = os.environ['integradora_host']
-DATABASE = 'tpch_100'
+DATABASE = 'tpch_500'
 INDEXES = {
     0: ['c_phone', 'customer'], 1: ['c_acctbal', 'customer'], 2: ['c_mktsegment', 'customer'],
     3: ['o_orderstatus', 'orders'], 4: ['o_orderdate', 'orders'], 5: ['o_comment', 'orders'],
@@ -114,7 +114,7 @@ class Db:
         return self.initial_state_size / scale(self.get_index_size())
 
     def simulate_individual(self, individual):
-        self.logging.info('simulate individual: %s' % individual)
+        #self.logging.info('simulate individual: %s' % individual)
         self.index_individual(individual)
         obj1 = self.objective1()
         obj2 = self.objective2()

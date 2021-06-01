@@ -102,6 +102,8 @@ def main():
         offspring = tools.selTournamentDCD(pop, K_TOURNAMENT)
         offspring = [toolbox.clone(ind) for ind in offspring]
 
+        offspring = sort_sequence(levenshtein, offspring)
+
         for child1, child2 in zip(offspring[::2], offspring[1::2]):
             if rng.random() <= CXPB:
                 # logging.debug('crossover %i' % gen)
@@ -123,6 +125,7 @@ def main():
             ind.fitness.values = fit
 
         pop = toolbox.select(pop + offspring, POP_SIZE)
+        pop = sort_sequence(levenshtein, pop)
         fits = [ind.fitness.values[0] for ind in pop]
 
         '''logging.debug('G %i:' % gen)
