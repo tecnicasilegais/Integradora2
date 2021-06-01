@@ -1,5 +1,6 @@
 import logging
 import random
+from datetime import datetime
 
 import numpy as np
 from deap import creator, base, tools
@@ -111,7 +112,8 @@ def main():
         bestf = min(fits)
 
         best_ind = tools.selBest(pop, 1)[0]
-        logging.info('Generation: %i, best individual: %s, fitness: %s' % (gen, best_ind, bestf))
+        logging.info('Generation: %i, best individual: %s, fitness: %s, time %s' %
+                     (gen, best_ind, bestf, datetime.now().strftime("%H-%M-%S_")))
         best_fits.append(bestf)
 
         if len(best_fits) > 10:
@@ -124,6 +126,7 @@ def main():
     print(best_ind)
     print(min(fits))
     logging.info('END RESULT: best individual: %s, fitness: %s' % (best_ind, min(fits)))
+    logging.info('Algorithm Ended, time %s' % datetime.now().strftime("%H-%M-%S_"))
 
 
 if __name__ == '__main__':
