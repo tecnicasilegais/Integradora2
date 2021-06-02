@@ -1,5 +1,6 @@
 import logging
 import random
+from datetime import datetime
 
 import numpy as np
 from deap import creator, base, tools
@@ -24,7 +25,7 @@ NGEN = 100  # number of generations
 K_ELITE = 1
 K_TOURNAMENT = 5
 
-logging.basicConfig(filename='logs\\' + util.make_filename('gen_execution.log'), level=logging.DEBUG)
+logging.basicConfig(filename='logs\\' + util.make_filename('gen_execution.log'), encoding='utf-8', level=logging.DEBUG)
 
 db = db_connection.Db(logging)
 
@@ -142,7 +143,8 @@ def main():
         bestf = min(fits)
 
         best_ind = tools.selBest(pop, 1)[0]
-        logging.info('Generation: %i, best individual: %s, fitness: %s' % (gen, best_ind, bestf))
+        logging.info('Generation: %i, best individual: %s, fitness: %s, time %s' %
+                     (gen, best_ind, bestf, datetime.now().strftime("%H-%M-%S_")))
         best_fits.append(bestf)
 
         if len(best_fits) > 10:
@@ -155,6 +157,8 @@ def main():
     print(best_ind)
     print(min(fits))
     logging.info('END RESULT: best individual: %s, fitness: %s' % (best_ind, min(fits)))
+    logging.info('Algorithm Ended, time %s' % datetime.now().strftime("%H-%M-%S_"))
+    return 0
 
 
 if __name__ == '__main__':

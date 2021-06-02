@@ -9,7 +9,7 @@ import queries
 USER = os.environ['integradora_user']
 PASSWORD = os.environ['integradora_password']
 HOST = os.environ['integradora_host']
-DATABASE = 'tpch_500'
+DATABASE = 'tpch_100'
 INDEXES = {
     0: ['c_phone', 'customer'], 1: ['c_acctbal', 'customer'], 2: ['c_mktsegment', 'customer'],
     3: ['o_orderstatus', 'orders'], 4: ['o_orderdate', 'orders'], 5: ['o_comment', 'orders'],
