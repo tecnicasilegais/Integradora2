@@ -54,7 +54,8 @@ def stop_criteria(best_fits): return len(set(best_fits)) == 1
 
 
 def sort_closest_ind(comparer, reference, comparisons):
-    res = [0] * len(comparisons)
+    #res = [0] * len(comparisons)
+    res = db.last_state
     for i in range(0, len(comparisons)):
         res[i] = (comparer.distance(reference, comparisons[i][1]), comparisons[i][1])
 

@@ -1,3 +1,4 @@
+import logging
 import math
 
 import mysql.connector
@@ -105,7 +106,7 @@ class Db:
                 else:
                     self.drop_index(INDEXES[i][1], INDEXES[i][0])
         self.last_state = individual.copy()
-        # print('time spent creating and dropping indexes:', time.time() - start)
+        logging.info('time spent creating and dropping indexes: %f' % (time.time() - start))
 
     def objective1(self):
         return self.time_all_indexed / self.execute_queries()
