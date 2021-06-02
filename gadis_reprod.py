@@ -91,10 +91,10 @@ def main():
         ind.fitness.values = fit
 
     fits = [ind.fitness.values[0] for ind in pop]
-    logging.debug('initial:\n')
+    '''logging.debug('initial:\n')
     for i in range(len(pop)):
         logging.debug('%i: %s' % (i, pop[i]))
-        logging.debug('%i: %s' % (i, fits[i]))
+        logging.debug('%i: %s' % (i, fits[i]))'''
 
     pop = toolbox.select(pop, len(pop))
 
@@ -108,7 +108,11 @@ def main():
 
         offspring = [toolbox.clone(ind) for ind in offspring]
 
+        logging.info('BEFORE: %s' % offspring)
+
         offspring = sort_sequence(levenshtein, offspring)
+
+        logging.info('AFTER: %s' % offspring)
 
         print(len(offspring))
         for child1, child2 in zip(offspring[::2], offspring[1::2]):
@@ -135,16 +139,11 @@ def main():
         pop = sort_sequence(levenshtein, pop)
         fits = [ind.fitness.values[0] for ind in pop]
 
-        '''logging.debug('G %i:' % gen)
-        for i in range(len(pop)):
-            logging.debug('%i: %s' % (i, pop[i]))
-            #logging.debug('%i: %s' % (i, fits[i]))'''
-
         bestf = min(fits)
 
         best_ind = tools.selBest(pop, 1)[0]
-        logging.info('Generation: %i, best individual: %s, fitness: %s, time %s' %
-                     (gen, best_ind, bestf, datetime.now().strftime("%H-%M-%S_")))
+        '''logging.info('Generation: %i, best individual: %s, fitness: %s, time %s' %
+                     (gen, best_ind, bestf, datetime.now().strftime("%H-%M-%S_")))'''
         best_fits.append(bestf)
 
         if len(best_fits) > 10:
@@ -156,8 +155,8 @@ def main():
     best_ind = tools.selBest(pop, 1)[0]
     print(best_ind)
     print(min(fits))
-    logging.info('END RESULT: best individual: %s, fitness: %s' % (best_ind, min(fits)))
-    logging.info('Algorithm Ended, time %s' % datetime.now().strftime("%H-%M-%S_"))
+    """logging.info('END RESULT: best individual: %s, fitness: %s' % (best_ind, min(fits)))
+    logging.info('Algorithm Ended, time %s' % datetime.now().strftime("%H-%M-%S_"))"""
     return 0
 
 
