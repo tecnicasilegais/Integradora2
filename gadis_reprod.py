@@ -54,10 +54,9 @@ def stop_criteria(best_fits): return len(set(best_fits)) == 1
 
 
 def sort_closest_ind(comparer, reference, comparisons):
-    #res = [0] * len(comparisons)
-    res = db.last_state
+    res = [0] * len(comparisons)
     for i in range(0, len(comparisons)):
-        res[i] = (comparer.distance(reference, comparisons[i][1]), comparisons[i][1])
+        res[i] = (comparer.distance(reference[13:], comparisons[i][1][13:]), comparisons[i][1])
 
     res = SortingAlgorithms.quick_sort(res, 0, len(res) - 1)
 
@@ -66,7 +65,7 @@ def sort_closest_ind(comparer, reference, comparisons):
 
 def sort_sequence(levenshtein, pop):
     res = [0] * len(pop)
-    remaining = sort_closest_ind(levenshtein, [0] * len(pop[0]), list(zip(res, pop)))
+    remaining = sort_closest_ind(levenshtein, db.last_state, list(zip(res, pop)))
     res[0] = remaining[0][1]
     for i in range(1, len(pop)):
         remaining = sort_closest_ind(levenshtein, remaining[0][1], remaining[1:])
@@ -143,8 +142,8 @@ def main():
         bestf = min(fits)
 
         best_ind = tools.selBest(pop, 1)[0]
-        '''logging.info('Generation: %i, best individual: %s, fitness: %s, time %s' %
-                     (gen, best_ind, bestf, datetime.now().strftime("%H-%M-%S_")))'''
+        logging.info('Generation: %i, best individual: %s, fitness: %s, time %s' %
+                     (gen, best_ind, bestf, datetime.now().strftime("%H-%M-%S_")))
         best_fits.append(bestf)
 
         if len(best_fits) > 10:
